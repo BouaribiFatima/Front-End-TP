@@ -1,0 +1,44 @@
+.main {
+  flex: 1;
+  padding: 20px;
+  overflow-x: auto;
+  background: #f0f0f0;
+}
+
+.board {
+  display: flex;
+  gap: 20px;
+  height: 100%;
+}
+
+.column {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  min-width: 250px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+}
+
+.colTitle {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.card {
+  background: #f9f9f9;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
