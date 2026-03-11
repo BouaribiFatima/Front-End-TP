@@ -1,3 +1,4 @@
+/* src/components/Header.module.css */
 .header {
   display: flex;
   justify-content: space-between;
@@ -27,9 +28,29 @@
   font-weight: bold;
 }
 
-.avatar {
-  background: rgba(255,255,255,0.2);
-  padding: 6px 10px;
-  border-radius: 50%;
-  font-size: 14px;
+/* Partie TP2 : Droite du header */
+.right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.userName {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.logoutBtn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+
+.logoutBtn:hover {
+  background: rgba(255, 255, 255, 0.25);
 }

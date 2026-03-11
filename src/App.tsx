@@ -1,50 +1,77 @@
+// src/App.tsx
 import { useState, useEffect } from 'react';
+import { useAuth } from './features/auth/AuthContext';
+import Login from './features/auth/Login';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import MainContent from './components/MainContent';
+import InfoBulle from './components/InfoBulle'; // Import du composant de test
+
 interface Project { id: string; name: string; color: string; }
 interface Column { id: string; title: string; tasks: string[]; }
+
 export default function App() {
-const [sidebarOpen, setSidebarOpen] = useState(true);
-const [projects, setProjects] = useState<Project[]>([]);
-const [columns, setColumns] = useState<Column[]>([]);
-const [loading, setLoading] = useState(true);
-useEffect(() => {
-    console.log('useEffect déclenché !');
-async function fetchData() {
-try {
-const [projRes, colRes] = await Promise.all([
-fetch('http://localhost:4000/projects'),
-fetch('http://localhost:4000/columns'),
-]);
-const projData = await projRes.json();
-      const colData = await colRes.json();
+  const { state: authState } = useAuth();
 
-      setProjects(projData);
-      setColumns(colData);
+  // Si l'utilisateur n'est pas connecté, on affiche uniquement la page Login
+  if (!authState.user) {
+    return <Login />;
+  }
 
-      console.log('Projets:', projData);
-      console.log('Colonnes:', colData);
-setProjects(await projRes.json());
-setColumns(await colRes.json());
-console.log('Projets:', projData);
-console.log('Colonnes:', colData);
-} catch (error) {
-console.error('Erreur:', error);
-} finally {
-setLoading(false);
+  // Si connecté, on affiche le Dashboard sécurisé
+  return <Dashboard />;
 }
-}
-fetchData();
-}, []); // [] = une seule fois au montage
-if (loading) return <div style={{padding:'2rem'}}>Chargement...</div>;
-return (
-<div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-<Header title="TaskFlow" onMenuClick={() => setSidebarOpen(p => !p)} />
-<div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-<Sidebar projects={projects} isOpen={sidebarOpen} />
-<MainContent columns={columns} />
-</div>
-</div>
-);
+
+function Dashboard() {
+  const { state: authState, dispatch } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Chargement des données depuis json-server (Séance 1)
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [p, co] = await Promise.all([
+          fetch('http://localhost:4000/projects'),
+          fetch('http://localhost:4000/columns'),
+        ]);
+        setProjects(await p.json());
+        setColumns(await co.json());
+      } catch (e) { 
+        console.error('Erreur de chargement:', e); 
+      } finally { 
+        setLoading(false); 
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (loading) return <div style={{ padding: '2rem' }}>Chargement...</div>;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      {/* Header avec nom d'utilisateur et Logout (Séance 2) */}
+      <Header
+        title="TaskFlow"
+        onMenuClick={() => setSidebarOpen(p => !p)}
+        userName={authState.user?.name}
+        onLogout={() => dispatch({ type: 'LOGOUT' })}
+      />
+
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        <Sidebar projects={projects} isOpen={sidebarOpen} />
+        
+        {/* Zone principale contenant le test du Bonus et le Board */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+          
+          {/* --- PARTIE 7 : TEST DU FLASH VISUEL --- */}
+          <InfoBulle /> 
+          
+          <MainContent columns={columns} />
+        </div>
+      </div>
+    </div>
+  );
 }
